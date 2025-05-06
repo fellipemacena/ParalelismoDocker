@@ -9,34 +9,29 @@ jobs:
   run-cypress-tests:
     runs-on: ubuntu-latest
     steps:
-      # 1. Clona o código
       - name: Checkout do código
         uses: actions/checkout@v3
 
-      # 2. Prepara o Buildx (opcional, mas recomendado p/ builds Docker)
+      
       - name: Configurar Docker Buildx
         uses: docker/setup-buildx-action@v2
 
-      # 3. Build da imagem Docker conforme seu Dockerfile
       - name: Build da imagem Docker
         uses: docker/build-push-action@v4
         with:
           context: .
           file: Dockerfile
-          push: false        # não envia a nenhum registry
+          push: false        
           tags: cypress-tests
 
-      # 4. Sobe os containers em background
       - name: Iniciar containers
         run: docker-compose up -d
 
-      # 5. Executa os testes e aguarda o término, propagando o exit code
       - name: Executar Cypress em paralelo
         run: |
           # substitua `service_name` pelo nome do seu serviço no docker-compose.yml
           docker-compose up --abort-on-container-exit --exit-code-from service_name
 
-      # 6. Derruba todos os containers
       - name: Teardown dos containers
         if: always()
         run: docker-compose down

@@ -2,7 +2,7 @@ services:
   cypress_test_1:
     build:
       context: .
-      dockerfile: dockerfile
+      dockerfile: dockerfile      
     environment:
       - CYPRESS_baseUrl=https://www.saucedemo.com/
       - TEST_FILE=cypress\e2e\pages\FrontEnd\1_login.spec.js
@@ -21,7 +21,6 @@ services:
       - cypress_cache:/root/.cache/Cypress
       - cypress_reports:/e2e/reports
 
-# Definição dos volumes
 volumes:
   cypress_cache:
   cypress_reports:
