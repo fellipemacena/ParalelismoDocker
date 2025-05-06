@@ -2,36 +2,35 @@ name: Cypress Parallel Tests
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
 
 jobs:
-  run-cypress-tests:
+  cypress-parallel:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout do código
+      - name: Checkout
         uses: actions/checkout@v3
 
-      
       - name: Configurar Docker Buildx
         uses: docker/setup-buildx-action@v2
 
-      - name: Build da imagem Docker
+      - name: Build Docker image
         uses: docker/build-push-action@v4
         with:
           context: .
           file: Dockerfile
-          push: false        
+          push: false
           tags: cypress-tests
 
       - name: Iniciar containers
-        run: docker-compose up -d
+        run: docker compose up -d
 
-      - name: Executar Cypress em paralelo
+      - name: Executar Cypress (paralelo)
         run: |
-          # substitua `service_name` pelo nome do seu serviço no docker-compose.yml
-          docker-compose up --abort-on-container-exit --exit-code-from service_name
+          docker compose up \
+            --abort-on-container-exit \
+            --exit-code-from cypress_test_1
 
       - name: Teardown dos containers
         if: always()
-        run: docker-compose down
+        run: docker compose down
